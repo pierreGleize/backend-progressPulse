@@ -8,7 +8,7 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-const exercisesRouter = require("./routes/exercices");
+const exercisesRouter = require("./routes/exercises");
 const hystoryRouter = require("./routes/hystory");
 const usersWorkoutsRouter = require("./routes/usersWorkouts");
 const workoutsLibrary = require("./routes/workoutsLibrary");
