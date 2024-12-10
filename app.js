@@ -11,7 +11,7 @@ var usersRouter = require("./routes/users");
 const exercisesRouter = require("./routes/exercises");
 const hystoryRouter = require("./routes/hystory");
 const usersWorkoutsRouter = require("./routes/usersWorkouts");
-const workoutsLibrary = require("./routes/workoutsLibrary");
+const workoutsRouter = require("./routes/workouts")
 
 var app = express();
 
@@ -26,6 +26,6 @@ app.use("/users", usersRouter);
 app.use("/exercises", exercisesRouter);
 app.use("/hystory", hystoryRouter);
 app.use("/usersWokouts", usersWorkoutsRouter);
-app.use("/workoutsLibrary", workoutsLibrary);
+app.use("/workouts", workoutsRouter);
 
 module.exports = app;
