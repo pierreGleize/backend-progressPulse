@@ -1,6 +1,13 @@
 var express = require("express");
 var router = express.Router();
-const WorkoutLibrary = require('../models/workoutsLibrary');
+const WorkoutLibrary = require('../models/workoutLibrary');
+
+router.get('/', (req, res) => {
+    WorkoutLibrary.find({})
+    .then(data => {
+        res.json({data: data})
+    })
+})
 
 router.get('/:byDifficulty', (req, res) => {
     WorkoutLibrary.find({difficulty: req.params.difficulty})
