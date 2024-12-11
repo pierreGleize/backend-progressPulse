@@ -13,8 +13,8 @@ router.get("/", (req, res) => {
 
 //affiche les programmes selon la difficultée  
 router.get('/byDifficulty/:byDifficulty', (req, res) => {
-    
     Workout.find({difficulty: {$regex: new RegExp(`${req.params.byDifficulty}$`,'i')} })
+    .populate('exercices.exercice')
     .then(data => {
         if(data){
             res.json({result: true, data})
