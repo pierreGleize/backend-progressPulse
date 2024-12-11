@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
 const userWorkoutSchema = mongoose.Schema ({
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+    user_token: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
     name: String,
-    exercices: [{
-        exercice: { type: mongoose.Schema.Types.ObjectId, ref: 'exercices' },
+    exercises: [{
+        exercise: { type: mongoose.Schema.Types.ObjectId, ref: 'exercices' },
         rest: Number,
-        sets: [{
+        customSets: [{
             weight: Number,
-            rep: Number
+            reps: Number
         }]
     }]
 })

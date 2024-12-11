@@ -28,7 +28,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/exercises", exercisesRouter);
 app.use("/hystory", hystoryRouter);
-app.use("/usersWokouts", usersWorkoutsRouter);
+app.use("/usersWorkouts", usersWorkoutsRouter);
 app.use("/workouts", workoutsRouter);
 
 module.exports = app;

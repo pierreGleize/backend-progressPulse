@@ -53,7 +53,6 @@ router.post("/signup", (req, res) => {
 });
 
 // Route pour connexion
-
 router.post("/signin", (req, res) => {
   if (!checkBody(req.body, ["email", "password"])) {
     res.json({ result: false, error: "Missing or empty fields" });
