@@ -6,6 +6,7 @@ const UserWorkout = require("../models/userWorkout");
 router.post("/addWorkout", async (req, res) => {
   const { userToken, name, exercices } = req.body;
   if (!userToken || !name || !exercices) {
+    console.log(name)
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
@@ -17,14 +18,13 @@ router.post("/addWorkout", async (req, res) => {
   const user_Id = user._id;
 
   const newWorkout = new UserWorkout({
-    user_id: user_Id,
+    user_token: user_Id,
     name: name,
     exercises: exercices,
   });
   newWorkout.save().then(() => {
     UserWorkout.findById(newWorkout._id)
-      .populate("user_id")
-      .populate("exercices")
+      .populate("exercises.exercise")
       .then((data) => res.json({ result: true, userWorkout: data }));
   });
 });
@@ -41,7 +41,7 @@ router.get("/:userToken", async (req, res) => {
     return;
   }
   const userWorkouts = await UserWorkout.find({ user_id: user._id }).populate(
-    "exercices"
+    "exercises.exercise"
   );
   if (userWorkouts.length === 0) {
     res.json({ result: false, error: "No workouts found" });
