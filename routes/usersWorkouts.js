@@ -26,6 +26,7 @@ router.post("/addWorkout", async (req, res) => {
   newWorkout.save().then(() => {
     UserWorkout.findById(newWorkout._id)
       .populate("exercises.exercise")
+      .select("-user_id")
       .then((data) => res.json({ result: true, userWorkout: data }));
   });
 });
@@ -41,15 +42,67 @@ router.get("/:userToken", async (req, res) => {
     res.json({ result: false, error: "User not found" });
     return;
   }
-  const userWorkouts = await UserWorkout.find({ user_id: user._id }).populate(
+  const userWorkouts = await UserWorkout.find({ user_id: user._id })
+  .populate(
     "exercises.exercise"
-  );
+  )
+  .select("-user_id");
   if (userWorkouts.length === 0) {
     res.json({ result: false, error: "No workouts found" });
     return;
   }
-
+  console.log(userWorkouts)
   res.json({ result: true, userWorkouts });
 });
+
+router.delete("/deleteWorkout/:workoutID", (req,res) => {
+  const workoutID = req.params.workoutID
+  console.log(workoutID)
+  UserWorkout.deleteOne({_id:workoutID})
+  .then(data => {
+    res.json({result: true, deleted: data.deletedCount})
+  })
+})
+
+router.delete("/deleteExercise", (req,res) => {
+
+  const {workoutID, exerciseID} = req.body
+  console.log({workoutID, exerciseID})
+  UserWorkout.findOne({_id : workoutID})
+  .then(workout => {
+    if (!workout) {
+      return res.status(404).json({ error: "Séance non trouvée" });
+    }
+    const exerciseIndex = workout.exercises.findIndex(exercise => exercise._id.toString() === exerciseID)
+    if (exerciseIndex === -1) {
+      return res.status(404).json({ error: "Exercice non trouvé" });
+    }
+    workout.exercises.splice(exerciseIndex, 1)
+    workout.save()
+    .then(updatedWorkout => {
+      res.json({result: true})
+    })
+  })
+})
+
+router.put('/updateSets', (req, res) => {
+  const {workoutID, exerciseID, customSets, rest} = req.body
+  UserWorkout.findById(workoutID)
+  .then(workout => {
+    if(!workout){
+      return res.json({result: false, error:"Séance non trouvée"})
+    }
+    for (let exercise of workout.exercises){
+      if (exercise._id == exerciseID){
+        exercise.customSets = customSets
+        exercise.rest = rest
+      }
+    }
+    workout.save()
+    .then(updatedWorkout => {
+      res.json({result: true})
+    })
+  })
+})
 
 module.exports = router;
