@@ -125,6 +125,7 @@ router.put("/changeEmail", async (req, res) => {
   user.save().then((data) => res.json({ result: true, newEmail: data.email }));
 });
 
+// Route pour entrer son poids
 router.post("/addWeight", async (req, res) => {
   const { weight, token } = req.body;
   console.log(weight, token);

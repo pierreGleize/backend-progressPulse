@@ -65,7 +65,6 @@ router.delete("/deleteWorkout/:workoutID", (req,res) => {
 })
 
 router.delete("/deleteExercise", (req,res) => {
-
   const {workoutID, exerciseID} = req.body
   console.log({workoutID, exerciseID})
   UserWorkout.findOne({_id : workoutID})
