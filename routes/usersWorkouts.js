@@ -16,9 +16,10 @@ router.post("/addWorkout", async (req, res) => {
     return;
   }
   const user_Id = user._id;
+  
 
   const newWorkout = new UserWorkout({
-    user_token: user_Id,
+    user_id: user_Id,
     name: name,
     exercises: exercices,
   });
