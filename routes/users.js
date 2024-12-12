@@ -43,6 +43,7 @@ router.post("/signup", (req, res) => {
                 username: data.username,
                 sound: data.sound,
                 weight: data.weight,
+                weight: data.target,
               },
             });
           });
@@ -68,6 +69,7 @@ router.post("/signin", (req, res) => {
           username: data.username,
           sound: data.sound,
           weight: data.weight,
+          target: data.target,
         },
       });
     } else {
@@ -107,7 +109,6 @@ router.put("/changeSound", (req, res) => {
 
 router.put("/changeEmail", async (req, res) => {
   const { email, password, token } = req.body;
-  console.log(email, password, token);
   if (!email || !password || !token) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
@@ -128,7 +129,6 @@ router.put("/changeEmail", async (req, res) => {
 // Route pour entrer son poids
 router.post("/addWeight", async (req, res) => {
   const { weight, token } = req.body;
-  console.log(weight, token);
   if (!weight || !token) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
@@ -139,7 +139,6 @@ router.post("/addWeight", async (req, res) => {
     res.json({ result: false, error: "User not founds" });
     return;
   }
-  const lastWeight = user.weight.at(-1);
   const newWeight = {
     weight,
     date: new Date(),
@@ -147,6 +146,31 @@ router.post("/addWeight", async (req, res) => {
   user.weight.push(newWeight);
   user.save().then(() => {
     res.json({ result: true, newWeight });
+  });
+});
+
+// Route pour ajouter un objectif de poids
+
+router.post("/weightTarget", async (req, res) => {
+  const { token, weight, date } = req.body;
+
+  if (!token || !weight || !date) {
+    res.json({ result: false, error: "Missing or empty fields" });
+    return;
+  }
+  const user = await User.findOne({ token });
+
+  if (!user) {
+    res.json({ ersult: false, error: "User not found" });
+    return;
+  }
+  const weightTarget = {
+    weight: weight,
+    date: date,
+  };
+  user.target = weightTarget;
+  user.save().then(() => {
+    res.json({ result: true, weightTarget });
   });
 });
 
