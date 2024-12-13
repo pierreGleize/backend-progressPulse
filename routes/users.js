@@ -43,7 +43,7 @@ router.post("/signup", (req, res) => {
                 username: data.username,
                 sound: data.sound,
                 weight: data.weight,
-                weight: data.target,
+                target: data.target,
               },
             });
           });
