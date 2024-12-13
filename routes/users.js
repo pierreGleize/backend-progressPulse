@@ -43,7 +43,7 @@ router.post("/signup", (req, res) => {
                 username: data.username,
                 sound: data.sound,
                 weight: data.weight,
-                weight: data.target,
+                target: data.target,
               },
             });
           });
@@ -151,22 +151,24 @@ router.post("/addWeight", async (req, res) => {
 // Route pour ajouter un objectif de poids
 
 router.post("/weightTarget", async (req, res) => {
-  const { token, weight, date } = req.body;
-
-  if (!token || !weight || !date) {
+  const { token, weight, date, objectif } = req.body;
+  if (!token || !weight || !date || !objectif) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
   const user = await User.findOne({ token });
 
   if (!user) {
-    res.json({ ersult: false, error: "User not found" });
+    res.json({ result: false, error: "User not found" });
     return;
   }
+
   const weightTarget = {
     weight: weight,
     date: date,
+    objectif: objectif,
   };
+  console.log(weightTarget);
   user.target = weightTarget;
   user.save().then(() => {
     res.json({ result: true, weightTarget });

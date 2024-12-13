@@ -10,12 +10,7 @@ const userSchema = mongoose.Schema({
   email: String,
   username: String,
   password: String,
-  target: [
-    {
-      weight: Number,
-      date: Date,
-    },
-  ],
+  target: { weight: Number, date: Date, objectif: String },
   sound: { type: String, default: "Alarm" },
   weight: { type: [weightSchema], default: [] },
 });
