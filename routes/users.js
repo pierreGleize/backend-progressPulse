@@ -106,7 +106,6 @@ router.put("/changeSound", (req, res) => {
 });
 
 // Route pour changer adresse email
-
 router.put("/changeEmail", async (req, res) => {
   const { email, password, token } = req.body;
   if (!email || !password || !token) {
@@ -126,6 +125,63 @@ router.put("/changeEmail", async (req, res) => {
   user.save().then((data) => res.json({ result: true, newEmail: data.email }));
 });
 
+// Pour changer de password
+router.put("/changePassword", async (req, res) => {
+  const { email, password, token, newPassword } = req.body;
+  if (!email || !password || !token || !newPassword) {
+    res.json({ result: false, error: "Missing or empty fields" });
+    return;
+  }
+  const user = await User.findOne({ token });
+  console.log(user.password);
+  if (!user) {
+    res.json({ result: false, error: "User not found" });
+    return;
+  }
+  if (!bcrypt.compareSync(password, user.password)) {
+    res.json({ result: false, error: "Password invalid" });
+    return;
+  }
+  if (bcrypt.compareSync(newPassword, user.password)) {
+    res.json({ result: false, error: "Password has not changed" });
+    return;
+  }
+  user.password = bcrypt.hashSync(newPassword, 10);
+  user.save().then(() => res.json({ result: true, error: user }));
+});
+
+// Pour changer le username
+router.post("/changeUsername", async (req, res) => {
+  const { email, password, token, username } = req.body;
+  if (!email || !password || !token || !username) {
+    res.json({ result: false, error: "Missing or empty fields" });
+    return;
+  }
+  const user = await User.findOne({ token });
+  if (!user) {
+    res.json({ result: false, error: "User not found" });
+    return;
+  }
+  if (!bcrypt.compareSync(password, user.password)) {
+    res.json({ result: false, error: "Password invalid" });
+    return;
+  }
+  if (username === user.username) {
+    res.json({ result: false, error: "Username has not changed" });
+    return;
+  }
+  const usernameList = await User.findOne({ username });
+  if (usernameList) {
+    res.json({ result: false, error: "Username already used" });
+    return;
+  }
+  user.username = username;
+  user
+    .save()
+    .then((data) => res.json({ result: true, newUsername: data.username }));
+});
+
+//Pour ajouter un poids
 router.post("/addWeight", async (req, res) => {
   const { weight, token } = req.body;
   if (!weight || !token) {
