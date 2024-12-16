@@ -3,11 +3,11 @@ const app = require("../app");
 
 let workoutID = ""
 
-it("POST /history/addWorkout", async () => {
-  const res = await request(app).post("/history/addWorkout").send({
+it("POST /histories/addWorkout", async () => {
+  const res = await request(app).post("/histories/addWorkout").send({
     date: "2024-12-13T10:44:13.532Z",
     note: 1,
-    performances: [{ exercise: "675b0f1461d286899d6ed39d", sets: [{exerciseID: "675b0f1461d286899d6ed39d",weight: 10,reps: 10,rest: 90,}]}],
+    performances: [{ exercise: "6756b253f510263134c1e580", sets: [{weight: 10,reps: 10,rest: 90,}]}],
     ressenti: "Super Séance",
     user: "zP0--hxlrJ6fRDZETiAF30Cwlaa9m57f",
     workout: "675b0f1461d286899d6ed39c",
@@ -19,19 +19,19 @@ it("POST /history/addWorkout", async () => {
     _id : expect.any(String),
     date: "2024-12-13T10:44:13.532Z",
     note: 1,
-    performances: [{ exercise: "675b0f1461d286899d6ed39d", sets: [{exerciseID: "675b0f1461d286899d6ed39d",weight: 10,reps: 10,rest: 90,}]}],
+    performances: expect.any(Array),
     ressenti: "Super Séance",
-    user: expect.any(String),
-    workout: "675b0f1461d286899d6ed39c",
+    workoutName: expect.any(String),
+    workoutID: expect.any(String)
   });
 });
 
-it("GET /history/userHistory/:userToken", async () => {
-  const res = await request(app).get("/history/userHistory/zP0--hxlrJ6fRDZETiAF30Cwlaa9m57f")
+it("GET /histories/:userToken", async () => {
+  const res = await request(app).get("/histories/zP0--hxlrJ6fRDZETiAF30Cwlaa9m57f")
 
   expect(res.statusCode).toBe(200);
   expect(res.body.result).toBe(true);
-  expect(res.body.workouts).toEqual(
+  expect(res.body.histories).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
         _id: expect.any(String),
@@ -39,16 +39,16 @@ it("GET /history/userHistory/:userToken", async () => {
         note: expect.any(Number),
         performances: expect.any(Array),
         ressenti: expect.any(String),
-        user: expect.any(String),
-        workout: expect.any(String),
+        workoutName: expect.any(String),
+        workoutID : expect.any(String)
       })
     ])
   );
 });
 
-it("DELETE /history/deleteWorkout/:WorkoutID", async () => {
-  const res = await request(app).delete(`/history/deleteWorkout/${workoutID}`)
+it("DELETE /histories/deleteWorkout/:historyID", async () => {
+  const res = await request(app).delete(`/histories/${workoutID}`)
   expect(res.statusCode).toBe(200);
   expect(res.body.result).toBe(true);
-  exepect(res.body.deletedCount).toBe(1)
+  expect(res.body.deletedCount).toBe(1)
 })
