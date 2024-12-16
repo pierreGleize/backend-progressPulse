@@ -60,18 +60,10 @@ router.delete("/deleteWorkout/:workoutID", (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-router.delete("/deleteExercise", (req,res) => {
-  const {workoutID, exerciseID} = req.body
-  console.log({workoutID, exerciseID})
-  UserWorkout.findOne({_id : workoutID})
-  .then(workout => {
-=======
 router.delete("/deleteExercise", (req, res) => {
   const { workoutID, exerciseID } = req.body;
   console.log({ workoutID, exerciseID });
   UserWorkout.findOne({ _id: workoutID }).then((workout) => {
->>>>>>> b806ba29958c4c0dccdbaeb837b6c1f911aed495
     if (!workout) {
       return res.status(404).json({ error: "Séance non trouvée" });
     }
