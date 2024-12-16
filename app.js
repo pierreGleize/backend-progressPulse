@@ -9,7 +9,7 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const exercisesRouter = require("./routes/exercises");
-const hystoryRouter = require("./routes/hystory");
+const historyRouter = require("./routes/history");
 const usersWorkoutsRouter = require("./routes/usersWorkouts");
 const workoutsRouter = require("./routes/workouts")
 
@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/exercises", exercisesRouter);
-app.use("/hystory", hystoryRouter);
+app.use("/history", historyRouter);
 app.use("/usersWorkouts", usersWorkoutsRouter);
 app.use("/workouts", workoutsRouter);
 
