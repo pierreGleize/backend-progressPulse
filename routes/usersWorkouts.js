@@ -68,7 +68,7 @@ router.delete("/deleteExercise", (req, res) => {
       return res.status(404).json({ error: "Séance non trouvée" });
     }
     const exerciseIndex = workout.exercises.findIndex(
-      (exercise) => exercise._id.toString() === exerciseID
+      (exercise) => exercise.exercise.toString() === exerciseID
     );
     if (exerciseIndex === -1) {
       return res.status(404).json({ error: "Exercice non trouvé" });
@@ -87,7 +87,7 @@ router.put("/updateSets", (req, res) => {
       return res.json({ result: false, error: "Séance non trouvée" });
     }
     for (let exercise of workout.exercises) {
-      if (exercise._id == exerciseID) {
+      if (exercise.exercise == exerciseID) {
         exercise.customSets = customSets;
         exercise.rest = rest;
       }
