@@ -98,4 +98,17 @@ router.put("/updateSets", (req, res) => {
   });
 });
 
+router.put("/updateName", (req, res) => {
+  const { workoutID, newWorkoutName } = req.body;
+  UserWorkout.findById(workoutID).then((workout) => {
+    if (!workout) {
+      return res.json({ result: false, error: "Séance non trouvée" });
+    }
+    workout.name= newWorkoutName
+    workout.save().then((updatedWorkout) => {
+      res.json({ result: true });
+    });
+  });
+});
+
 module.exports = router;
