@@ -133,7 +133,6 @@ router.put("/changePassword", async (req, res) => {
     return;
   }
   const user = await User.findOne({ token });
-  console.log(user.password);
   if (!user) {
     res.json({ result: false, error: "User not found" });
     return;
