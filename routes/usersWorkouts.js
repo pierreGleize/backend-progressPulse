@@ -10,6 +10,7 @@ router.post("/addWorkout", async (req, res) => {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
+
   const user = await User.findOne({ token: userToken });
   if (!user) {
     res.json({ result: false, error: "User not found" });
@@ -17,18 +18,30 @@ router.post("/addWorkout", async (req, res) => {
   }
   const user_Id = user._id;
 
-  const newWorkout = new UserWorkout({
-    user_id: user_Id,
-    name: name,
-    exercises: exercices,
-  });
-  newWorkout.save().then(() => {
-    UserWorkout.findById(newWorkout._id)
-      .populate("exercises.exercise")
-      .select("-user_id") // Pour exclure le champs de l'id de user dans la BDD'
-      .then((data) => res.json({ result: true, userWorkout: data }));
-  });
-});
+  // await permet d'attendre que UserWorkout.findOne se termine pour donner une valeur à existing
+  //On cherche le workout en fonction de l'utilisateur et du nom de la séance
+  const existing = await UserWorkout.findOne({user_id : user_Id, name : name})
+
+  if(!existing){
+    const newWorkout = new UserWorkout({
+        user_id: user_Id,
+        name: name,
+        exercises: exercices,
+      });
+      newWorkout.save().then(() => {
+        UserWorkout.findById(newWorkout._id)
+          .populate("exercises.exercise")
+          .select("-user_id") // Pour exclure le champs de l'id de user dans la BDD'
+          .then((data) => {
+            res.json({ result: true, userWorkout: data });
+          });
+      });
+  } else {
+    res.json({result : false , error : 'Workout name already exist'})
+  }
+      
+    }
+  )
 
 router.get("/:userToken", async (req, res) => {
   const { userToken } = req.params;
