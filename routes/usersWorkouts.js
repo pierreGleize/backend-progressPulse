@@ -2,10 +2,11 @@ var express = require("express");
 var router = express.Router();
 const User = require("../models/user");
 const UserWorkout = require("../models/userWorkout");
+const History = require("../models/history");
 
 router.post("/addWorkout", async (req, res) => {
-  const { userToken, name, exercices } = req.body;
-  if (!userToken || !name || !exercices) {
+  const { userToken, name, exercices, image } = req.body;
+  if (!userToken || !name || !exercices || !image) {
     console.log(name);
     res.json({ result: false, error: "Missing or empty fields" });
     return;
@@ -21,6 +22,7 @@ router.post("/addWorkout", async (req, res) => {
     user_id: user_Id,
     name: name,
     exercises: exercices,
+    image: image,
   });
   newWorkout.save().then(() => {
     UserWorkout.findById(newWorkout._id)
@@ -98,17 +100,52 @@ router.put("/updateSets", (req, res) => {
   });
 });
 
-router.put("/updateName", (req, res) => {
-  const { workoutID, newWorkoutName } = req.body;
-  UserWorkout.findById(workoutID).then((workout) => {
-    if (!workout) {
-      return res.json({ result: false, error: "Séance non trouvée" });
-    }
-    workout.name= newWorkoutName
-    workout.save().then((updatedWorkout) => {
-      res.json({ result: true });
-    });
+router.put("/updateName", async (req, res) => {
+  const { workoutID, newWorkoutName, token } = req.body;
+  if (!workoutID || !newWorkoutName || !token) {
+    res.json({ result: false, error: "Missing or empty fields" });
+    return;
+  }
+  const userWorkout = await UserWorkout.findById(workoutID);
+  if (!userWorkout) {
+    res.json({ result: false, error: "Workout not found" });
+    return;
+  }
+  if (userWorkout.name === newWorkoutName) {
+    res.json({ result: false, error: "Workoutname has not changed" });
+    return;
+  }
+
+  const user = await User.findOne({ token });
+  if (!user) {
+    res.json({ result: false, error: "User not found" });
+    return;
+  }
+  const historyUser = await History.find({ user: user._id, workoutID });
+  console.log(historyUser);
+  if (historyUser.length > 0) {
+    await History.updateMany(
+      { user: user._id, workoutID },
+      { workoutName: newWorkoutName }
+    );
+  }
+  userWorkout.name = newWorkoutName;
+  userWorkout.save().then(() => {
+    res.json({ result: true });
   });
 });
+
+// router.put("/updateName", (req, res) => {
+//   const { workoutID, newWorkoutName } = req.body;
+//   UserWorkout.findById(workoutID).then((workout) => {
+//     if (!workout) {
+//       return res.json({ result: false, error: "Séance non trouvée" });
+//     }
+//     workout.name = newWorkoutName;
+//     workout.save().then((updatedWorkout) => {
+//       res.json({ result: true });
+//     });
+//   });
+// });
 
 module.exports = router;
