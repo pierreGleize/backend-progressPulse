@@ -11,25 +11,32 @@ router.post("/addWorkout", async (req, res) => {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
+
   const user = await User.findOne({ token: userToken });
   if (!user) {
     res.json({ result: false, error: "User not found" });
     return;
   }
+
   const user_Id = user._id;
 
-  const newWorkout = new UserWorkout({
-    user_id: user_Id,
-    name: name,
-    exercises: exercices,
-    image: image,
-  });
-  newWorkout.save().then(() => {
-    UserWorkout.findById(newWorkout._id)
-      .populate("exercises.exercise")
-      .select("-user_id") // Pour exclure le champs de l'id de user dans la BDD'
-      .then((data) => res.json({ result: true, userWorkout: data }));
-  });
+  const existing = await UserWorkout.findOne({ user_id: user_Id, name: name });
+  if (!existing) {
+    const newWorkout = new UserWorkout({
+      user_id: user_Id,
+      name: name,
+      exercises: exercices,
+      image: image,
+    });
+    newWorkout.save().then(() => {
+      UserWorkout.findById(newWorkout._id)
+        .populate("exercises.exercise")
+        .select("-user_id") // Pour exclure le champs de l'id de user dans la BDD'
+        .then((data) => res.json({ result: true, userWorkout: data }));
+    });
+  } else {
+    res.json({ result: false, error: "Workout name already exist" });
+  }
 });
 
 router.get("/:userToken", async (req, res) => {
@@ -82,22 +89,20 @@ router.delete("/deleteExercise", (req, res) => {
   });
 });
 
-router.post("/addExercise", (req,res) => {
-  const {workoutID, exerciseToAdd} = req.body
-  UserWorkout.findOne({_id: workoutID})
-  .then(workout => {
-    workout.exercises.push(exerciseToAdd)
-    workout.save()
-      .then((updatedWorkout) => {
-      UserWorkout.findOne({_id: workoutID})
-      .populate("exercises.exercise")
-      .select("-user_id")
-      .then((updatedWorkout) => {
-        res.json({result: true, updatedWorkout})
-      })
-    })
-  })
-})
+router.post("/addExercise", (req, res) => {
+  const { workoutID, exerciseToAdd } = req.body;
+  UserWorkout.findOne({ _id: workoutID }).then((workout) => {
+    workout.exercises.push(exerciseToAdd);
+    workout.save().then((updatedWorkout) => {
+      UserWorkout.findOne({ _id: workoutID })
+        .populate("exercises.exercise")
+        .select("-user_id")
+        .then((updatedWorkout) => {
+          res.json({ result: true, updatedWorkout });
+        });
+    });
+  });
+});
 
 router.put("/updateSets", (req, res) => {
   const { workoutID, exerciseID, customSets, rest } = req.body;
