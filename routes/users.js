@@ -6,9 +6,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
 /* GET users listing. */
-router.get("/", function (req, res, next) {
-  console.log("dans la route");
-});
+router.get("/", function (req, res, next) {});
 
 // Route pour inscription
 
@@ -223,7 +221,6 @@ router.post("/weightTarget", async (req, res) => {
     date: date,
     objectif: objectif,
   };
-  console.log(weightTarget);
   user.target = weightTarget;
   user.save().then(() => {
     res.json({ result: true, weightTarget });

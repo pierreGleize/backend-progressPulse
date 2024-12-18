@@ -12,7 +12,6 @@ router.get("/", (req, res) => {
 // Récup les exercices selon groupe musculaire
 router.get("/:muscleGroup", (req, res) => {
   muscleGroup = req.params.muscleGroup;
-  console.log(muscleGroup);
   Exercise.find({
     muscleGroupe: { $regex: new RegExp(`^${muscleGroup}$`, "i") },
   }).then((data) => {
