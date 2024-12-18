@@ -82,6 +82,23 @@ router.delete("/deleteExercise", (req, res) => {
   });
 });
 
+router.post("/addExercise", (req,res) => {
+  const {workoutID, exerciseToAdd} = req.body
+  UserWorkout.findOne({_id: workoutID})
+  .then(workout => {
+    workout.exercises.push(exerciseToAdd)
+    workout.save()
+      .then((updatedWorkout) => {
+      UserWorkout.findOne({_id: workoutID})
+      .populate("exercises.exercise")
+      .select("-user_id")
+      .then((updatedWorkout) => {
+        res.json({result: true, updatedWorkout})
+      })
+    })
+  })
+})
+
 router.put("/updateSets", (req, res) => {
   const { workoutID, exerciseID, customSets, rest } = req.body;
   UserWorkout.findById(workoutID).then((workout) => {
