@@ -6,7 +6,6 @@ const UserWorkout = require("../models/userWorkout");
 router.post("/addWorkout", async (req, res) => {
   const { userToken, name, exercices } = req.body;
   if (!userToken || !name || !exercices) {
-    console.log(name);
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
@@ -16,10 +15,11 @@ router.post("/addWorkout", async (req, res) => {
     res.json({ result: false, error: "User not found" });
     return;
   }
+
   const user_Id = user._id;
 
   // await permet d'attendre que UserWorkout.findOne se termine pour donner une valeur à existing
-  //On cherche le workout en fonction de l'utilisateur et du nom de la séance
+  // On cherche le workout en fonction de l'utilisateur et du nom de la séance
   const existing = await UserWorkout.findOne({user_id : user_Id, name : name})
 
   if(!existing){
