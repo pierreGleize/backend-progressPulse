@@ -4,11 +4,11 @@ const { checkBody } = require("../modules/checkBody");
 const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 /* GET users listing. */
-router.get("/", function (req, res, next) {
-  console.log("dans la route");
-});
+router.get("/", function (req, res, next) {});
 
 // Route pour inscription
 
@@ -223,11 +223,88 @@ router.post("/weightTarget", async (req, res) => {
     date: date,
     objectif: objectif,
   };
-  console.log(weightTarget);
   user.target = weightTarget;
   user.save().then(() => {
     res.json({ result: true, weightTarget });
   });
 });
+
+// Route pour demander un changement de mot de passe et envoyer un mail avec un token
+router.post("/forgotPassword", (req, res) => {
+  const {email} = req.body
+  User.find({email: email})
+  .then(user => {
+    if(user.length === 0){
+      res.json({result: false, error: "User not found with this email"})
+    } else {
+      const token = crypto.randomBytes(2).toString('hex')
+      const hash = bcrypt.hashSync(token, 10);
+      user[0].resetToken = hash
+      user[0].save()
+      .then(updatedUser => {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.GMAIL_MAIL,
+            pass: process.env.GMAIL_MAIL,
+          },
+        });
+        const mailOptions = {
+          from: 'progress.pulse.app@gmail.com',
+          to: 'thomas.lebel38@gmail.com',
+          subject: 'Reinitialisation du mot de passe',
+          text: `Votre code pour réinitialiser le mot de passe : ${token}`,
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log(error);
+            res.status(500).send('Error sending email');
+          } else {
+            console.log(`Email sent: ${info.response}`);
+            res.status(200).send('Check your email for instructions on resetting your password');
+          }
+        });
+      })
+      
+    }
+  })
+})
+
+// Route pour vérifier le token de l'utilisateur
+router.get("/verifyResetToken", (req, res) => {
+  const {email, token} = req.body
+  User.findOne({email : email})
+  .then(user => {
+    if(!user){
+      res.json({result: false, error: "User not found"})
+    } else {
+      if (bcrypt.compareSync(token, user.resetToken)){
+        res.json({result: true, data: "Le token est ok"})
+      } else {
+        res.json({result: false, data: "Le token est pas ok"})
+      }
+    }
+  })
+})
+
+// Route pour vérifier le token de l'utilisateur et changer le mot de passe
+router.post("/changeForgottenPassword", (req,res) => {
+  const {email, token, newPassword} = req.body
+  User.findOne({email : email})
+  .then(user => {
+    if(!user){
+      res.json({result: false, error: "User not found"})
+    } else {
+      if (bcrypt.compareSync(token, user.resetToken)){
+        user.password = bcrypt.hashSync(newPassword, 10);
+        user.resetToken = ""
+        user.save()
+        .then(() => res.json({ result: true, message: "Mot de passe modifié" }));
+      } else {
+        res.json({result: false, data: "Le token est pas ok"})
+      }
+    }
+  })
+})
 
 module.exports = router;

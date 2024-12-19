@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema({
   target: { weight: Number, date: Date, objectif: String },
   sound: { type: String, default: "Alarm" },
   weight: { type: [weightSchema], default: [] },
+  resetToken : String
 });
 
 const User = mongoose.model("users", userSchema);

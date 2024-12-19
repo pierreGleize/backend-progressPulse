@@ -7,7 +7,6 @@ const History = require("../models/history");
 router.post("/addWorkout", async (req, res) => {
   const { userToken, name, exercices, image } = req.body;
   if (!userToken || !name || !exercices || !image) {
-    console.log(name);
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
@@ -57,13 +56,11 @@ router.get("/:userToken", async (req, res) => {
     res.json({ result: false, error: "No workouts found" });
     return;
   }
-  console.log(userWorkouts);
   res.json({ result: true, userWorkouts });
 });
 
 router.delete("/deleteWorkout/:workoutID", (req, res) => {
   const workoutID = req.params.workoutID;
-  console.log(workoutID);
   UserWorkout.deleteOne({ _id: workoutID }).then((data) => {
     res.json({ result: true, deleted: data.deletedCount });
   });
@@ -71,7 +68,7 @@ router.delete("/deleteWorkout/:workoutID", (req, res) => {
 
 router.delete("/deleteExercise", (req, res) => {
   const { workoutID, exerciseID } = req.body;
-  console.log({ workoutID, exerciseID });
+
   UserWorkout.findOne({ _id: workoutID }).then((workout) => {
     if (!workout) {
       return res.status(404).json({ error: "Séance non trouvée" });
@@ -144,7 +141,6 @@ router.put("/updateName", async (req, res) => {
     return;
   }
   const historyUser = await History.find({ user: user._id, workoutID });
-  console.log(historyUser);
   if (historyUser.length > 0) {
     await History.updateMany(
       { user: user._id, workoutID },
@@ -156,18 +152,5 @@ router.put("/updateName", async (req, res) => {
     res.json({ result: true });
   });
 });
-
-// router.put("/updateName", (req, res) => {
-//   const { workoutID, newWorkoutName } = req.body;
-//   UserWorkout.findById(workoutID).then((workout) => {
-//     if (!workout) {
-//       return res.json({ result: false, error: "Séance non trouvée" });
-//     }
-//     workout.name = newWorkoutName;
-//     workout.save().then((updatedWorkout) => {
-//       res.json({ result: true });
-//     });
-//   });
-// });
 
 module.exports = router;
