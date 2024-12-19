@@ -222,7 +222,7 @@ router.post("/weightTarget", async (req, res) => {
     weight: weight,
     date: date,
     objectif: objectif,
-    initialWeight,
+    initialWeight: initialWeight,
   };
   user.target = weightTarget;
   user.save().then(() => {
