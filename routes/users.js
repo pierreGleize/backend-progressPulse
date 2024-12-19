@@ -246,12 +246,12 @@ router.post("/forgotPassword", (req, res) => {
           service: 'gmail',
           auth: {
             user: process.env.GMAIL_MAIL,
-            pass: process.env.GMAIL_MAIL,
+            pass: process.env.GMAIL_PASSWORD,
           },
         });
         const mailOptions = {
           from: 'progress.pulse.app@gmail.com',
-          to: 'thomas.lebel38@gmail.com',
+          to: {email},
           subject: 'Reinitialisation du mot de passe',
           text: `Votre code pour réinitialiser le mot de passe : ${token}`,
         };
