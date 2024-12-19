@@ -207,7 +207,7 @@ router.post("/addWeight", async (req, res) => {
 
 router.post("/weightTarget", async (req, res) => {
   const { token, weight, date, objectif, initialWeight } = req.body;
-  if (!token || !weight || !date || !objectif) {
+  if (!token || !weight || !date || !objectif || !initialWeight) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
