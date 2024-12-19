@@ -250,21 +250,17 @@ router.post("/forgotPassword", (req, res) => {
         });
         const mailOptions = {
           from: "progress.pulse.app@gmail.com",
-          to: "thomas.lebel38@gmail.com",
+          to: email,
           subject: "Reinitialisation du mot de passe",
           text: `Votre code pour réinitialiser le mot de passe : ${token}`,
         };
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
             console.log(error);
-            res.status(500).send("Error sending email");
+            res.json({ result: false, error: error });
           } else {
             console.log(`Email sent: ${info.response}`);
-            res
-              .status(200)
-              .send(
-                "Check your email for instructions on resetting your password"
-              );
+            res.json({ result: true, message: "Token envoyé" });
           }
         });
       });
@@ -273,7 +269,7 @@ router.post("/forgotPassword", (req, res) => {
 });
 
 // Route pour vérifier le token de l'utilisateur
-router.get("/verifyResetToken", (req, res) => {
+router.post("/verifyResetToken", (req, res) => {
   const { email, token } = req.body;
   User.findOne({ email: email }).then((user) => {
     if (!user) {
