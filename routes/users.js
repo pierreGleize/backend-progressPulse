@@ -206,7 +206,7 @@ router.post("/addWeight", async (req, res) => {
 // Route pour ajouter un objectif de poids
 
 router.post("/weightTarget", async (req, res) => {
-  const { token, weight, date, objectif } = req.body;
+  const { token, weight, date, objectif, initialWeight } = req.body;
   if (!token || !weight || !date || !objectif) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
@@ -222,6 +222,7 @@ router.post("/weightTarget", async (req, res) => {
     weight: weight,
     date: date,
     objectif: objectif,
+    initialWeight,
   };
   user.target = weightTarget;
   user.save().then(() => {
