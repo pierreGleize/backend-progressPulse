@@ -10,10 +10,15 @@ const userSchema = mongoose.Schema({
   email: String,
   username: String,
   password: String,
-  target: { weight: Number, date: Date, objectif: String },
+  target: {
+    weight: Number,
+    date: Date,
+    objectif: String,
+    initialWeight: Number,
+  },
   sound: { type: String, default: "Alarm" },
   weight: { type: [weightSchema], default: [] },
-  resetToken : String
+  resetToken: String,
 });
 
 const User = mongoose.model("users", userSchema);
