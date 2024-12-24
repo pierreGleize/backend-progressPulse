@@ -121,6 +121,11 @@ router.put("/changeEmail", async (req, res) => {
     res.json({ result: false, error: "Password invalid" });
     return;
   }
+  const emailAllReadyExist = await User.findOne({ email: email });
+  if (emailAllReadyExist) {
+    res.json({ result: false, error: "Email all ready exist" });
+    return;
+  }
   user.email = email;
   user.save().then((data) => res.json({ result: true, newEmail: data.email }));
 });
@@ -146,12 +151,13 @@ router.put("/changePassword", async (req, res) => {
     return;
   }
   user.password = bcrypt.hashSync(newPassword, 10);
-  user.save().then(() => res.json({ result: true, error: user }));
+  user.save().then(() => res.json({ result: true }));
 });
 
 // Pour changer le username
-router.post("/changeUsername", async (req, res) => {
+router.put("/changeUsername", async (req, res) => {
   const { email, password, token, username } = req.body;
+  console.log("hello");
   if (!email || !password || !token || !username) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
