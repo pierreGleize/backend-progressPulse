@@ -47,3 +47,9 @@ Ce projet a été développé en deux semaines par une équipe de trois personne
 [![tracked-weight.png](https://i.postimg.cc/D0796XhS/tracked-weight.png)](https://postimg.cc/HcPvsjVm)  [![workout-follow-up.png](https://i.postimg.cc/SRKZj7qf/workout-follow-up.png)](https://postimg.cc/k6kNpS22)  [![reglages.png](https://i.postimg.cc/0NdZfHyC/reglages.png)](https://postimg.cc/2qy4jGvq)
 
 ## Contributeurs
+- Thomas Lebel
+- Alexandre Lassaigne
+- Pierre Gleize
+
+## Remerciements
+Un grand merci à nos formateurs et au jury de développeurs pour leurs retours constructifs. Ce projet nous a permis de mettre en pratique les compétences acquises tout au long de la formation.
