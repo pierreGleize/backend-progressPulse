@@ -1,4 +1,4 @@
-# Progress Pulse
+# 💪 Progress Pulse
 
 Progress Pulse est une application mobile de musculation conçue pour permettre aux utilisateurs de suivre leurs performances séance après séance, de réaliser leurs séances en direct avec un timer pour le temps de repos, et de suivre leur progression à travers des statistiques détaillées.
 
